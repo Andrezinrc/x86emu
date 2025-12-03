@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 #include "cpu.h"
 
 int main(){
@@ -8,7 +9,9 @@ int main(){
     cpu_init(&cpu);
     
     uint8_t memory[MEM_SIZE] = {0};
-    
+    memset(memory, 0, sizeof(memory));
+
+
     // mov eax, 5
     memory[0] = 0xB8;
     memory[1] = 0x05;

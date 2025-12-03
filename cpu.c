@@ -1,18 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "cpu.h"
 
 void cpu_init(struct CPU *cpu) {
-    cpu->eax.e = 0;
-    cpu->ebx.e = 0;
-    cpu->ecx.e = 0;
-    cpu->edx.e = 0;
-    cpu->esi.e = 0;
-    cpu->edi.e = 0;
-    cpu->ebp.e = 0;
+    memset(cpu, 0, sizeof(struct CPU));
     cpu->esp.e = MEM_SIZE - 4;
     cpu->eip = 0;
-    cpu->flags.CF = cpu->flags.ZF = cpu->flags.SF = cpu->flags.OF = 0;
 }
 
 void cpu_step(struct CPU *cpu, uint8_t *memory) {
