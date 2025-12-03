@@ -36,6 +36,20 @@ void cpu_step(struct CPU *cpu, uint8_t *memory) {
             break;
         }
         
+        case 0x89: { // MOV r/m32, r32
+            uint8_t modrm = memory[cpu->eip + 1];
+            if(modrm == 0xC1){
+                cpu->ecx.e = cpu->eax.e;
+                cpu->eip += 2;
+                break;
+            } else {
+                printf("MOV com modrm nao suportado. %02X\n", modrm);
+                exit(1);
+            }
+        }
+        
+        
+        
         case 0xF4: {
             printf("Encerrando.\n");
             exit(1);

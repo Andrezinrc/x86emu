@@ -26,8 +26,12 @@ int main(){
     memory[8] = 0x00;
     memory[9] = 0x00;
     
+    // mov ecx, eax
+    memory[10] = 0x89;
+    memory[11] = 0xC1;
+    
     // HLT
-    memory[10] = 0xF4;
+    memory[12] = 0xF4;
     
     
 
