@@ -2,15 +2,14 @@
 #include <stdint.h>
 #include <string.h>
 #include "cpu.h"
+#include "memory.h"
 
 int main(){
     
     struct CPU cpu;
-    cpu_init(&cpu);
+    uint8_t *memory = mem_create();
+    cpu_init(&cpu, MEM_SIZE);
     
-    uint8_t memory[MEM_SIZE] = {0};
-    memset(memory, 0, sizeof(memory));
-
 
     // mov eax, 5
     memory[0] = 0xB8;

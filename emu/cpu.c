@@ -2,18 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include "cpu.h"
+#include "memory.h"
 
-void cpu_init(struct CPU *cpu) {
+void cpu_init(struct CPU *cpu, uint32_t mem_size) {
     memset(cpu, 0, sizeof(struct CPU));
-    cpu->esp.e = MEM_SIZE - 4;
+    cpu->esp.e = mem_size - 4;
     cpu->eip = 0;
-}
-
-uint32_t read32(uint8_t *mem, uint32_t addr){
-    return mem[addr] |
-        ((uint32_t)mem[addr + 1] << 8) |
-        ((uint32_t)mem[addr + 2] << 16) |
-        ((uint32_t)mem[addr + 3] << 24);
 }
 
 void update_ZF_SF(struct CPU *cpu, uint32_t res){
@@ -22,26 +16,26 @@ void update_ZF_SF(struct CPU *cpu, uint32_t res){
 }
 
 void cpu_step(struct CPU *cpu, uint8_t *memory) {
-    uint8_t opcode = memory[cpu->eip];
+    uint8_t opcode = mem_read8(memory, cpu->eip);
 
     switch (opcode) {
 
         case 0xB8: { // MOV EAX, imm32
-            uint32_t imm = read32(memory, cpu->eip + 1);
+            uint32_t imm = mem_read32(memory, cpu->eip + 1);
             cpu->eax.e = imm;
             cpu->eip += 5;
             break;
         }
 
         case 0xB9: { // MOV ECX, imm32
-            uint32_t imm = read32(memory, cpu->eip + 1);
+            uint32_t imm = mem_read32(memory, cpu->eip + 1);
             cpu->ecx.e = imm;
             cpu->eip += 5;
             break;
         }
         
         case 0x89: { // MOV r/m32, r32
-            uint8_t modrm = memory[cpu->eip + 1];
+            uint8_t modrm = mem_read8(memory, cpu->eip + 1);
             if(modrm == 0xC1){
                 cpu->ecx.e = cpu->eax.e;
                 cpu->eip += 2;
@@ -53,7 +47,7 @@ void cpu_step(struct CPU *cpu, uint8_t *memory) {
         }
         
         case 0x05: { // ADD EAX, imm32
-            uint32_t imm = read32(memory, cpu->eip + 1);
+            uint32_t imm = mem_read32(memory, cpu->eip + 1);
             uint32_t a = cpu->eax.e;
             uint32_t res = a + imm;
             cpu->eax.e = res;

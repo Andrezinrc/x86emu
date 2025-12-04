@@ -3,8 +3,6 @@
 
 #include <stdint.h>
 
-#define MEM_SIZE 65536
-
 union Reg32 {
     uint32_t e;
     struct { uint16_t x; };
@@ -22,9 +20,7 @@ struct CPU {
     struct Flags flags;
 };
 
-
-
-void cpu_init(struct CPU *cpu);
+void cpu_init(struct CPU *cpu, uint32_t mem_size);
 void cpu_step(struct CPU *cpu, uint8_t *memory);
 
 
