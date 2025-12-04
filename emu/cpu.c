@@ -15,6 +15,14 @@ void update_ZF_SF(struct CPU *cpu, uint32_t res){
     cpu->flags.SF = (res >> 31) & 1;
 }
 
+void update_add_flags(struct CPU* cpu, uint32_t a, uint32_t b, uint32_t res){
+    update_ZF_SF(cpu, res);
+    cpu->flags.CF = (res < a);
+    uint32_t sa = (uint32_t)a;
+    uint32_t sb = (uint32_t)b;
+    uint32_t sr = (uint32_t)res;
+}
+
 void cpu_step(struct CPU *cpu, uint8_t *memory) {
     uint8_t opcode = mem_read8(memory, cpu->eip);
 
@@ -56,6 +64,21 @@ void cpu_step(struct CPU *cpu, uint8_t *memory) {
             break;
         }
         
+        case 0x01: { // ADD r/m32, r32
+            uint8_t modrm = mem_read8(memory, cpu->eip + 1);
+            if(modrm == 0xC8) {
+                uint32_t a = cpu->eax.e;
+                uint32_t b = cpu->ecx.e;
+                uint32_t res = a + b;
+                update_add_flags(cpu, a, b, res);
+                cpu->eax.e = res;
+                cpu->eip += 2;
+            } else {
+                printf("modrm não suportado para opcode 0x01 em EIP=0x%X: 0x%02X\n", cpu->eip, modrm);
+                exit(1);
+            }
+            break;
+        }
         
         
         case 0xF4: {

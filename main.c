@@ -36,9 +36,12 @@ int main(){
     memory[15] = 0x00;
     memory[16] = 0x00;
     
-    // HLT
-    memory[12] = 0xF4;
+    // add eax, ecx
+    memory[17] = 0x01;
+    memory[18] = 0xC8;
     
+    // HLT
+    memory[19] = 0xF4;   
     
 
     
