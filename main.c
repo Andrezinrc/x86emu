@@ -40,8 +40,12 @@ int main(){
     memory[17] = 0x01;
     memory[18] = 0xC8;
     
+    // sub eax, ecx
+    memory[19] = 0x29;
+    memory[20] = 0xC8;
+    
     // HLT
-    memory[19] = 0xF4;   
+    memory[21] = 0xF4;   
     
 
     

@@ -23,6 +23,16 @@ void update_add_flags(struct CPU* cpu, uint32_t a, uint32_t b, uint32_t res){
     uint32_t sr = (uint32_t)res;
 }
 
+
+void update_sub_flags(struct CPU *cpu, uint32_t a, uint32_t b, uint32_t res) {
+    update_ZF_SF(cpu, res);
+    cpu->flags.CF = (a < b);
+    int32_t sa = (int32_t)a;
+    int32_t sb = (int32_t)b;
+    int32_t sr = (int32_t)res;
+    cpu->flags.OF = (((sa ^ sb) & (sa ^ sr)) < 0);
+}
+
 void cpu_step(struct CPU *cpu, uint8_t *memory) {
     uint8_t opcode = mem_read8(memory, cpu->eip);
 
@@ -75,6 +85,22 @@ void cpu_step(struct CPU *cpu, uint8_t *memory) {
                 cpu->eip += 2;
             } else {
                 printf("modrm não suportado para opcode 0x01 em EIP=0x%X: 0x%02X\n", cpu->eip, modrm);
+                exit(1);
+            }
+            break;
+        }
+        
+        case 0x29: { // SUB r/m32, r32
+            uint8_t modrm = mem_read8(memory, cpu->eip + 1);
+            if(modrm == 0xC8){
+                uint32_t a = cpu->eax.e;
+                uint32_t b = cpu->ecx.e;
+                uint32_t res = a - b;
+                update_sub_flags(cpu, a, b, res);
+                cpu->eax.e = res;
+                cpu->eip += 2;
+            } else {
+                printf("modrm não suportado para SUB em EIP=0x%X: 0x%02X\n", cpu->eip, modrm);
                 exit(1);
             }
             break;
