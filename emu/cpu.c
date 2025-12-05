@@ -31,6 +31,7 @@ void update_add_flags(struct CPU* cpu, uint32_t a, uint32_t b, uint32_t res){
     uint32_t sa = (uint32_t)a;
     uint32_t sb = (uint32_t)b;
     uint32_t sr = (uint32_t)res;
+    cpu->flags.OF = ((sa > 0 && sb > 0 && sr < 0) || (sa < 0 && sb < 0 && sr > 0));
 }
 
 
